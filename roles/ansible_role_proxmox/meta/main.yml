@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  role_name: ansible_role_proxmox
+  author: Laszlo Beres beres.laszlo@qfence.hu
+  description: "Configuration Proxmox node"
+  license: "GPL-2.0-or-later"
+  min_ansible_version: '7.6.0'
+  dependencies: []
+  galaxy_tags:
+    - virtualization
+    - proxmox
+  platforms:
+    - name: Debian
+      versions:
+        - 12
