@@ -31,6 +31,7 @@ programs:
 
 users: []
 ssh_pub_keys: []
+root_password: ""
 
 _delete_repositories_files: []
 _gpg_keys: []

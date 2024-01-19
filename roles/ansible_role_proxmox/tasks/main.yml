@@ -32,6 +32,12 @@
     state: present
   with_items: "{{ programs + _programs | default([]) }}"
 
+- name: Change root user password
+  ansible.builtin.user:
+    name: test
+    password: "{{ root_password | password_hash('sha512', 'CaHvzrXTvjD') }}"
+    state: present
+
 - name: Setting linux user
   block:
     - name: Add linux users
