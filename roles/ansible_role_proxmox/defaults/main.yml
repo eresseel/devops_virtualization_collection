@@ -1,0 +1,39 @@
+---
+delete_repositories_files:
+  - path: /etc/apt/sources.list
+  - path: /etc/apt/sources.list.d/ceph.list
+  - path: /etc/apt/sources.list.d/pve-enterprise.list
+  - path: /etc/apt/sources.list.d/pve-no-subscription.list
+
+gpg_keys:
+  - url: https://enterprise.proxmox.com/debian/proxmox-release-bookworm.gpg
+
+add_repositories_files:
+  - name: "deb http://deb.debian.org/debian/ bookworm main contrib non-free"
+  - name: "deb http://deb.debian.org/debian/ bookworm-updates main contrib non-free"
+  - name: "deb http://deb.debian.org/debian/ bookworm-backports main contrib non-free"
+  - name: "deb http://deb.debian.org/debian-security bookworm-security main contrib"
+  - name: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg] http://download.proxmox.com/debian/pve bookworm pve-no-subscription"
+
+programs:
+  - name: gnupg
+  - name: gnupg2
+  - name: apt-transport-https
+  - name: ca-certificates
+  - name: software-properties-common
+  - name: sudo
+  - name: mc
+  - name: vim
+  - name: ncdu
+  - name: htop
+  - name: net-tools
+  - name: tcpdump
+
+users: []
+ssh_pub_keys: []
+root_password: ""
+
+_delete_repositories_files: []
+_gpg_keys: []
+_add_repositories_files: []
+_programs: []
