@@ -26,6 +26,18 @@
         autoclean: yes
         autoremove: yes
 
+- name: Install proxmox-ve
+  ansible.builtin.apt:
+    name: "{{ proxmox_version }}"
+    state: present
+    force_apt_get: yes
+    allow_change_held_packages: yes
+
+- name: Hold proxmox-ve package
+  ansible.builtin.dpkg_selections:
+    name: proxmox-ve
+    selection: hold
+
 - name: Install dependencies
   ansible.builtin.apt:
     name: "{{ item.name }}"

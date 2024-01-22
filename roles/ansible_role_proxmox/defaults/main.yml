@@ -1,4 +1,5 @@
 ---
+proxmox_version: "proxmox-ve=8.1.0"
 delete_repositories_files:
   - path: /etc/apt/sources.list
   - path: /etc/apt/sources.list.d/ceph.list
