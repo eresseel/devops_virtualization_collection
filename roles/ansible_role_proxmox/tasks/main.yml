@@ -1,0 +1,81 @@
+---
+- name: Configuration repositories and system setup
+  block:
+    - name: Delete proxmox list files
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ delete_repositories_files + _delete_repositories_files | default([]) }}"
+
+    - name: Add gpg key
+      ansible.builtin.get_url:
+        url: "{{ item.url }}"
+        dest: /etc/apt/trusted.gpg.d/proxmox-release-bookworm.gpg
+      with_items: "{{ gpg_keys + _gpg_keys | default([]) }}"
+
+    - name: Add source repository into sources list
+      ansible.builtin.apt_repository:
+        repo: "{{ item.name }}"
+        state: present
+        update_cache: false
+      with_items: "{{ add_repositories_files + _add_repositories_files | default([]) }}"
+
+    - name: Update cache
+      ansible.builtin.apt:
+        update_cache: yes
+        autoclean: yes
+        autoremove: yes
+
+- name: Install dependencies
+  ansible.builtin.apt:
+    name: "{{ item.name }}"
+    state: present
+  with_items: "{{ programs + _programs | default([]) }}"
+
+- name: Change root user password
+  ansible.builtin.user:
+    name: root
+    password: "{{ root_password | password_hash('sha512', 'CaHvzrXTvjD') }}"
+    state: present
+
+- name: Setting linux user
+  block:
+    - name: Add linux users
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        shell: /bin/bash
+        state: present
+      with_items: "{{ users }}"
+
+    - name: Create a directory
+      ansible.builtin.file:
+        path: "/home/{{ item.name }}/.ssh"
+        owner: "{{ item.name }}"
+        group: "{{ item.name }}"
+        state: directory
+      with_items: "{{ users }}"
+
+    - name: Add ssh key
+      ansible.posix.authorized_key:
+        user: "{{ item.user }}"
+        key: "{{ item.key }}"
+        state: present
+      with_items: "{{ ssh_pub_keys }}"
+
+    - name: Add user in sudoers
+      community.general.sudoers:
+        name: "{{ item.name }}"
+        state: present
+        user: "{{ item.name }}"
+        runas: root
+        commands: ALL
+      with_items: "{{ users }}"
+      when: users is defined and users | length > 0 and ssh_pub_keys is defined and ssh_pub_keys | length > 0
+
+- name: Hold proxmox packages
+  ansible.builtin.dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  with_items:
+    - proxmox-ve
+    - pve-manager

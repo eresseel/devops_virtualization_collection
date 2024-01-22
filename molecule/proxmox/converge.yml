@@ -1,0 +1,13 @@
+---
+- name: Converge Proxmox VM
+  hosts: proxmox
+  gather_facts: true
+  collections:
+    - devops.devops_virtualization_collection
+  roles:
+    - role: ansible_role_proxmox
+      vars:
+        _programs:
+          - name: python3-apt
+          - name: python3-pip
+          - name: python3-venv
